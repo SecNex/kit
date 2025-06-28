@@ -50,3 +50,7 @@ func NewDatabaseConnection(host string, port string, user string, password strin
 	}
 	return &DatabaseConnection{Config: DatabaseConfig{Host: host, Port: port, User: user, Password: password, DBName: dbName}, DB: db}
 }
+
+func (db *DatabaseConnection) AutoMigrate(models ...interface{}) {
+	db.DB.AutoMigrate(models...)
+}
