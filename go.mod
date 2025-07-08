@@ -3,6 +3,7 @@ module github.com/secnex/kit
 go 1.24.4
 
 require (
+	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.0
