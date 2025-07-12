@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
+	"net/http"
+
 	"github.com/secnex/kit/database"
-	"github.com/secnex/kit/server"
-	"github.com/secnex/kit/server/handler"
-	"github.com/secnex/kit/server/middlewares"
+	"github.com/secnex/kit/server/api"
 )
 
 func main() {
@@ -17,14 +16,25 @@ func main() {
 		DBName:   "kit",
 	})
 
-	middleware := middlewares.NewMiddleware(db, "log.txt")
+	server := api.NewServer(8081, db)
 
-	server := server.NewServer(8080, db, middleware)
+	internalRouter := server.CreateSubRouter("/_")
 
-	handler := handler.NewHandler(db)
+	internalRouter.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
 
-	server.NewVersionRouter(1, func(router *mux.Router) {
-		router.HandleFunc("/test", handler.TestDatabaseConnection)
+	internalRouter.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, World!"))
+	})
+
+	apiV1Router := server.CreateSubRouter("/api/v1")
+
+	apiV1Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, World!"))
 	})
 
 	server.Run()

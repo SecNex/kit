@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/secnex/kit/utils"
 	"gorm.io/gorm"
 )
 
@@ -12,6 +13,8 @@ type Client struct {
 	Name        string `gorm:"not null" json:"name"`
 	Description string `gorm:"not null" json:"description"`
 	Slug        string `gorm:"not null" json:"slug"`
+
+	ClientSecret string `gorm:"not null" json:"client_secret"`
 
 	ApplicationID string `gorm:"not null" json:"application_id"`
 
@@ -28,4 +31,13 @@ type Client struct {
 
 func (c *Client) TableName() string {
 	return "clients"
+}
+
+func (c *Client) BeforeCreate(tx *gorm.DB) (err error) {
+	hashedSecret, err := utils.Hash(c.ClientSecret, utils.DefaultParams)
+	if err != nil {
+		return err
+	}
+	c.ClientSecret = hashedSecret
+	return
 }

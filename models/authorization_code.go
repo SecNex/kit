@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/secnex/kit/utils"
 	"gorm.io/gorm"
 )
 
@@ -31,5 +32,12 @@ func (a *AuthorizationCode) TableName() string {
 
 func (a *AuthorizationCode) BeforeCreate(tx *gorm.DB) (err error) {
 	a.ExpiresAt = time.Now().Add(time.Minute * 5)
+
+	hashedCode, err := utils.Hash(a.Code, utils.DefaultParams)
+	if err != nil {
+		return err
+	}
+	a.Code = hashedCode
+
 	return
 }

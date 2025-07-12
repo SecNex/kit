@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/secnex/kit/utils"
 	"gorm.io/gorm"
 )
 
@@ -38,4 +39,13 @@ type User struct {
 
 func (u *User) TableName() string {
 	return "users"
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	hashedPassword, err := utils.Hash(u.Password, utils.DefaultParams)
+	if err != nil {
+		return err
+	}
+	u.Password = hashedPassword
+	return
 }
