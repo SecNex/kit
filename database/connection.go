@@ -93,5 +93,11 @@ func (db *DatabaseConnection) AutoMigrate(models ...interface{}) {
 }
 
 func (db *DatabaseConnection) TestConnection() error {
-	return db.DB.Exec("SELECT 1").Error
+	fmt.Println("🔄 Testing database connection...")
+	if err := db.DB.Exec("SELECT 1").Error; err != nil {
+		fmt.Println("🚨 Failed to test database connection!")
+		return err
+	}
+	fmt.Println("✅ Database connection tested!")
+	return nil
 }

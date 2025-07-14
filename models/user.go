@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/secnex/kit/utils"
@@ -17,7 +18,7 @@ type User struct {
 	LastName    string `gorm:"not null" json:"last_name"`
 	DisplayName string `gorm:"not null" json:"display_name"`
 
-	AvatarURL string `gorm:"not null" json:"avatar_url"`
+	AvatarURL string `gorm:"default:null" json:"avatar_url"`
 
 	Password string `gorm:"not null" json:"password"`
 
@@ -47,5 +48,6 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 	u.Password = hashedPassword
+	u.DisplayName = fmt.Sprintf("%s %s", u.FirstName, u.LastName)
 	return
 }

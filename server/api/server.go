@@ -50,6 +50,14 @@ func (s *Server) CreateSubRouterWithMiddleware(path string, middleware func(http
 	return subRouter
 }
 
+func (s *Server) CreateSubRouterWithMiddlewares(path string, middlewares ...func(http.Handler) http.Handler) *mux.Router {
+	subRouter := s.CreateSubRouter(path)
+	for _, middleware := range middlewares {
+		subRouter.Use(middleware)
+	}
+	return subRouter
+}
+
 func (s *Server) Run() {
 	httpLogger := logger.NewHTTPLogger(s.Database, "http.log")
 	fmt.Println("🚀 Running server on port: ", s.Port)

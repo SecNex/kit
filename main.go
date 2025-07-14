@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/secnex/kit/database"
 	"github.com/secnex/kit/server/api"
+	"github.com/secnex/kit/server/handler"
+	"github.com/secnex/kit/server/middlewares"
 )
 
 func main() {
@@ -16,26 +16,22 @@ func main() {
 		DBName:   "kit",
 	})
 
+	h := handler.NewHandler(db)
+
 	server := api.NewServer(8081, db)
 
 	internalRouter := server.CreateSubRouter("/_")
 
-	internalRouter.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	})
+	internalRouter.HandleFunc("/healthz", h.Healthz).Methods("GET")
 
-	internalRouter.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello, World!"))
-	})
+	internalRouter.HandleFunc("/hello", h.Hello).Methods("GET")
 
-	apiV1Router := server.CreateSubRouter("/api/v1")
+	apiV1Router := server.CreateSubRouterWithMiddlewares("/api/v1", middlewares.OnlyJSON)
 
-	apiV1Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello, World!"))
-	})
+	apiV1Router.HandleFunc("/ip", h.IP).Methods("GET")
+	apiV1Router.HandleFunc("/auth/login", h.AuthLogin).Methods("POST")
+	apiV1Router.HandleFunc("/user", h.UserGet).Methods("GET")
+	apiV1Router.HandleFunc("/user", h.UserNew).Methods("POST")
 
 	server.Run()
 }
