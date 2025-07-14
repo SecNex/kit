@@ -4,7 +4,13 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 )
+
+type IPResponse struct {
+	IP   string `json:"ip"`
+	Type string `json:"type"`
+}
 
 // Handler to get the IP address of the client (IPv4 and IPv6)
 func (h *Handler) IP(w http.ResponseWriter, r *http.Request) {
@@ -33,10 +39,15 @@ func (h *Handler) IP(w http.ResponseWriter, r *http.Request) {
 		host = ip
 	}
 
+	ipType := "ipv4"
+	if strings.Contains(host, ":") {
+		ipType = "ipv6"
+	}
+
 	if r.Header.Get("Accept") == "application/json" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(fmt.Sprintf(`{"ip":"%s"}`, host)))
+		w.Write([]byte(fmt.Sprintf(`{"ip":"%s", "type":"%s"}`, host, ipType)))
 	} else {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusOK)

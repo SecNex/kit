@@ -157,7 +157,7 @@ func (l *HTTPLogger) LogHTTPRequest(next http.Handler) http.Handler {
 			Host:         r.Host,
 		}
 
-		fmt.Println(NginxFormatHTTPLog(entry))
+		fmt.Println(FormatHTTPLog(entry))
 
 		l.logChan <- entry
 	})

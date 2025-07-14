@@ -79,6 +79,11 @@ func (db *DatabaseConnection) AutoMigrateAll() {
 		// Models depending on Project
 		&models.Queue{}, // depends on Project
 
+		// Models depending on Worker
+		&models.Worker{},          // depends on Project
+		&models.WorkQueue{},       // depends on Worker
+		&models.WorkQueuesEntry{}, // depends on WorkQueue
+
 		// Models depending on multiple entities
 		&models.AuthorizationCode{}, // depends on Client and User
 		&models.Ticket{},            // depends on Queue, Contact, User, Tenant

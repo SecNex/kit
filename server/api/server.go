@@ -35,7 +35,7 @@ func NewServer(port int, database *database.DatabaseConnection) *Server {
 }
 
 func (s *Server) CreateSubRouter(path string) *mux.Router {
-	fmt.Println("🚀 Creating sub router for path: ", path)
+	fmt.Printf("🚀 Creating sub router for path: %s\n", path)
 	subRouter := s.Router.PathPrefix(path).Subrouter()
 
 	return subRouter
@@ -44,7 +44,7 @@ func (s *Server) CreateSubRouter(path string) *mux.Router {
 func (s *Server) CreateSubRouterWithMiddleware(path string, middleware func(http.Handler) http.Handler) *mux.Router {
 	subRouter := s.CreateSubRouter(path)
 
-	fmt.Println("🚀 Adding middleware to sub router for path: ", path)
+	fmt.Printf("🚀 Adding middleware to sub router for path: %s\n", path)
 	subRouter.Use(middleware)
 
 	return subRouter
@@ -60,7 +60,7 @@ func (s *Server) CreateSubRouterWithMiddlewares(path string, middlewares ...func
 
 func (s *Server) Run() {
 	httpLogger := logger.NewHTTPLogger(s.Database, "http.log")
-	fmt.Println("🚀 Running server on port: ", s.Port)
+	fmt.Printf("🚀 Running server on port: %d\n", s.Port)
 	handler := httpLogger.LogHTTPRequest(s.Router)
 	http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", s.Port), handler)
 }

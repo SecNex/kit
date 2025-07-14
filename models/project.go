@@ -23,7 +23,8 @@ type Project struct {
 
 	Tenant Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
 
-	Queues []Queue `gorm:"foreignKey:ProjectID" json:"queues"`
+	Queues  []Queue  `gorm:"foreignKey:ProjectID" json:"queues"`
+	Workers []Worker `gorm:"foreignKey:ProjectID" json:"workers"`
 }
 
 func (p *Project) TableName() string {
