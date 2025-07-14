@@ -63,5 +63,13 @@ func main() {
 	apiV1Router.HandleFunc("/tenant", h.TenantGet).Methods("GET")
 	apiV1Router.HandleFunc("/tenant", h.TenantNew).Methods("POST")
 
+	// Client
+	apiV1Router.HandleFunc("/client", h.ClientGet).Methods("GET")
+	apiV1Router.HandleFunc("/client", h.ClientNew).Methods("POST")
+
+	// App
+	apiV1Router.HandleFunc("/app", h.AppGet).Methods("GET")
+	apiV1Router.HandleFunc("/app", h.AppNew).Methods("POST")
+
 	server.Run()
 }

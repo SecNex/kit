@@ -29,12 +29,11 @@ type AuthRegisterRequest struct {
 func (h *Handler) AuthLogin(w http.ResponseWriter, r *http.Request) {
 	var request AuthLoginRequest
 
-	json.NewDecoder(r.Body).Decode(&request)
-
-	if request.Email == "" || request.Password == "" {
-		BadRequest(w, r, "Email and password are required!")
+	if !h.RequiredBodyFields(w, r, "email", "password") {
 		return
 	}
+
+	json.NewDecoder(r.Body).Decode(&request)
 
 	var user models.User
 
@@ -63,10 +62,7 @@ func (h *Handler) AuthLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) AuthRegister(w http.ResponseWriter, r *http.Request) {
 	var request AuthRegisterRequest
 
-	json.NewDecoder(r.Body).Decode(&request)
-
-	if request.Username == "" || request.Email == "" || request.Password == "" || request.FirstName == "" || request.LastName == "" || request.TenantID == "" {
-		BadRequest(w, r, "Username, email, password, first name, last name, and tenant ID are required!")
+	if !h.RequiredBodyFields(w, r, "username", "email", "password", "first_name", "last_name", "tenant_id") {
 		return
 	}
 

@@ -43,11 +43,11 @@ func NewDatabaseConnection(host string, port string, user string, password strin
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", host, port, user, password, dbName, sslMode)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		fmt.Println("🚨 Failed to connect to database!")
+		fmt.Printf("🚨 Failed to connect to database...\n\n")
 		panic(err)
 	}
 
-	fmt.Println("✅ Connected to database!")
+	fmt.Printf("✅ Connected to database...\n\n")
 
 	return &DatabaseConnection{Config: DatabaseConfig{Host: host, Port: port, User: user, Password: password, DBName: dbName}, DB: db}
 }
@@ -98,11 +98,11 @@ func (db *DatabaseConnection) AutoMigrate(models ...interface{}) {
 }
 
 func (db *DatabaseConnection) TestConnection() error {
-	fmt.Println("🔄 Testing database connection...")
+	fmt.Printf("\n🔄 Testing database connection...\n")
 	if err := db.DB.Exec("SELECT 1").Error; err != nil {
-		fmt.Println("🚨 Failed to test database connection!")
+		fmt.Printf("🚨 Failed to test database connection!\n\n")
 		return err
 	}
-	fmt.Println("✅ Database connection tested!")
+	fmt.Printf("✅ Database connection tested!\n\n")
 	return nil
 }

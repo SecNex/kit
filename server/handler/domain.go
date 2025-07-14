@@ -37,6 +37,10 @@ func (h *Handler) DomainGet(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DomainNew(w http.ResponseWriter, r *http.Request) {
 	var result models.Domain
 
+	if !h.RequiredBodyFields(w, r, "name", "organization_id") {
+		return
+	}
+
 	err := json.NewDecoder(r.Body).Decode(&result)
 	if err != nil {
 		BadRequest(w, r, "Invalid request body")

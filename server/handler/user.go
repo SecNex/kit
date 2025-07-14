@@ -40,14 +40,16 @@ func (h *Handler) UserGet(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UserNew(w http.ResponseWriter, r *http.Request) {
 	var request UserNewRequest
-	json.NewDecoder(r.Body).Decode(&request)
 
-	// Check if all fields are present
-	if request.Username == "" || request.Email == "" || request.FirstName == "" || request.LastName == "" || request.Password == "" || request.TenantID == "" {
-		BadRequest(w, r, "username, email, first name, last name, password, and tenant ID are required!")
+	if !h.RequiredBodyFields(w, r, "username", "email", "first_name", "last_name", "password", "tenant_id") {
 		return
 	}
 
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		BadRequest(w, r, "Invalid request body")
+		return
+	}
 	// Check if tenant is default ("default") then set tenant ID to 00000000-0000-0000-0000-000000000000
 	if request.TenantID == "default" {
 		request.TenantID = "00000000-0000-0000-0000-000000000000"
@@ -55,7 +57,7 @@ func (h *Handler) UserNew(w http.ResponseWriter, r *http.Request) {
 
 	// Check if tenant exists
 	var tenant models.Tenant
-	err := h.db.DB.Where("id = ?", request.TenantID).First(&tenant).Error
+	err = h.db.DB.Where("id = ?", request.TenantID).First(&tenant).Error
 	if err != nil {
 		BadRequest(w, r, "Tenant not found!")
 		return

@@ -39,6 +39,10 @@ func (h *Handler) TenantGet(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) TenantNew(w http.ResponseWriter, r *http.Request) {
 	var result models.Tenant
 
+	if !h.RequiredBodyFields(w, r, "name", "description", "organization_id", "domain_id") {
+		return
+	}
+
 	err := json.NewDecoder(r.Body).Decode(&result)
 	if err != nil {
 		BadRequest(w, r, "Invalid request body")

@@ -36,6 +36,10 @@ func (h *Handler) OrganizationGet(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) OrganizationNew(w http.ResponseWriter, r *http.Request) {
 	var result models.Organization
 
+	if !h.RequiredBodyFields(w, r, "name") {
+		return
+	}
+
 	err := json.NewDecoder(r.Body).Decode(&result)
 	if err != nil {
 		BadRequest(w, r, "Invalid request body")
