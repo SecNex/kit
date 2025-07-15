@@ -8,6 +8,7 @@ import (
 	"github.com/secnex/kit/server/api"
 	"github.com/secnex/kit/server/handler"
 	"github.com/secnex/kit/server/middlewares"
+	"github.com/secnex/kit/utils/initializer"
 )
 
 func main() {
@@ -34,6 +35,10 @@ func main() {
 
 	db := database.NewDatabaseConnectionWithConfig(config.GetDatabaseConfig())
 
+	i := initializer.NewInitializer(db, config)
+	i.Initialize()
+
+	// Initialize handlers
 	h := handler.NewHandler(db)
 
 	server := api.NewServer(config.Port, db)

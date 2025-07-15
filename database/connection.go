@@ -7,6 +7,7 @@ import (
 	"github.com/secnex/kit/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DatabaseConfig struct {
@@ -41,7 +42,9 @@ func NewDatabaseConnectionWithEnv() *DatabaseConnection {
 func NewDatabaseConnection(host string, port string, user string, password string, dbName string, sslMode string) *DatabaseConnection {
 	fmt.Println("🚀 Connecting to database...")
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", host, port, user, password, dbName, sslMode)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		fmt.Printf("🚨 Failed to connect to database...\n\n")
 		panic(err)
