@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/secnex/kit/config"
 	"github.com/secnex/kit/database"
 	"github.com/secnex/kit/server/api"
@@ -21,7 +23,14 @@ func main() {
 		"secret",
 		true,
 		"http.log",
+		config.DefaultConfig{
+			OrganizationName: "Default Organization",
+			TenantName:       "Default Tenant",
+			DomainName:       "Default Domain",
+		},
 	)
+
+	fmt.Printf("🔥 Environment: %s\n\n", config.Environment)
 
 	db := database.NewDatabaseConnectionWithConfig(config.GetDatabaseConfig())
 
@@ -40,36 +49,38 @@ func main() {
 	publicRouter.HandleFunc("/hello", h.Hello).Methods("GET")
 	publicRouter.HandleFunc("/ip", h.IP).Methods("GET")
 
-	apiV1Router := server.CreateSubRouterWithMiddlewares("/api/v1", middlewares.ContentTypeOnlyJSON)
+	apiV1Router := server.CreateApiServerWithMiddlewares("/api", 1, middlewares.ContentTypeOnlyJSON)
 
-	// API v1
-	// Auth
+	// v1: Auth
 	apiV1Router.HandleFunc("/auth/login", h.AuthLogin).Methods("POST")
 	apiV1Router.HandleFunc("/auth/register", h.AuthRegister).Methods("POST")
 
-	// User
+	// v1: User
 	apiV1Router.HandleFunc("/user", h.UserGet).Methods("GET")
 	apiV1Router.HandleFunc("/user", h.UserNew).Methods("POST")
 
-	// Organization
+	// v1: Organization
 	apiV1Router.HandleFunc("/organization", h.OrganizationGet).Methods("GET")
 	apiV1Router.HandleFunc("/organization", h.OrganizationNew).Methods("POST")
 
-	// Domain
+	// v1: Domain
 	apiV1Router.HandleFunc("/domain", h.DomainGet).Methods("GET")
 	apiV1Router.HandleFunc("/domain", h.DomainNew).Methods("POST")
 
-	// Tenant
+	// v1: Tenant
 	apiV1Router.HandleFunc("/tenant", h.TenantGet).Methods("GET")
 	apiV1Router.HandleFunc("/tenant", h.TenantNew).Methods("POST")
 
-	// Client
+	// v1: Client
 	apiV1Router.HandleFunc("/client", h.ClientGet).Methods("GET")
 	apiV1Router.HandleFunc("/client", h.ClientNew).Methods("POST")
 
-	// App
+	// v1: App
 	apiV1Router.HandleFunc("/app", h.AppGet).Methods("GET")
 	apiV1Router.HandleFunc("/app", h.AppNew).Methods("POST")
+
+	// v1: HTTPLog
+	apiV1Router.HandleFunc("/log/http", h.HTTPLogGet).Methods("GET")
 
 	server.Run()
 }
