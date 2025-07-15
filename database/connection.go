@@ -47,7 +47,7 @@ func NewDatabaseConnection(host string, port string, user string, password strin
 		panic(err)
 	}
 
-	fmt.Printf("✅ Connected to database...\n\n")
+	fmt.Printf("✅ Connected to database!\n\n")
 
 	return &DatabaseConnection{Config: DatabaseConfig{Host: host, Port: port, User: user, Password: password, DBName: dbName}, DB: db}
 }
